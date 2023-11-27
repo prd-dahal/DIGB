@@ -1,0 +1,15 @@
+{% extends "admin/change_form.html" %}
+
+
+{% block extrahead %}{{ block.super }}
+    <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+    {{ media }}
+{% endblock %}
+
+
+{% block field_sets %}
+    {% for fieldset in adminform %}
+        {% include "admin/include/fieldsets.html" %}
+    {% endfor %}
+{% endblock %}
+

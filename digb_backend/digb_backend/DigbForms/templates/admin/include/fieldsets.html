@@ -1,0 +1,178 @@
+<style>
+    .add-choice-field {
+
+        margin-left: 2vh;
+        background-color: #5baa9b;
+        color: white;
+
+    }
+
+    .choice-label-with-button {
+        display: flex;
+        text-align: center;
+        flex-direction: row;
+        margin: 2vh 0;
+        cursor: pointer;
+    }
+
+    .form-group-row {
+    {#display: flex;#}{#flex-wrap: wrap;#}{#flex-direction: row;#}{#justify-items: flex-start;#}{#text-align: justify;#}{#justify-content: space-around;#}
+    }
+
+</style>
+
+
+<div class="card card-info">
+    <div class="card-header bg-info">
+        <h3 class="card-title">{% if fieldset.name %}{{ fieldset.name }}{% endif %}</h3>
+        {% if fieldset.description %}
+            <div class="description">{{ fieldset.description|safe }}</div>
+        {% endif %}
+
+    </div>
+    <div class="card-body">
+        {% for line in fieldset %}
+            <div class="form-group row form-row
+                {% if line.fields|length_is:'1' and line.errors %}has_error errors{% endif %}
+                {% if not line.has_visible_field %}hidden{% endif %}
+                {% for field in line %}
+
+                    {% if field.field.name %}
+                        field-{{ field.field.name }}
+                    {% endif %}
+                {% endfor %}">
+                {% if line.fields|length_is:'1' %}{{ line.errors }}{% endif %}
+
+                {% for field in line %}
+                    <div class="form-group-row"
+                    >
+
+                        <label for="{{ field.field.name }}"
+                               class="col-sm-2 col-form-label"
+                               style="text-align: center"
+                        >
+                            {{ field.label_tag }}
+                        </label>
+
+                        <div class="col-sm-10" style="margin-left: auto;">
+                            {% if field.is_checkbox %}
+                                {# HAS CHOICES FIELD#}
+                                {% if field.field.name == "has_choices" %}
+                                    <div id="has_choices" onclick="ShowHideDiv(this)">
+                                        {{ field.field }}
+                                    </div>
+
+                                    <div id="choices_formset" style="display:none;">
+                                        <div class="choice-label-with-button">
+                                            <p id="choices_formset_label"></p>
+                                            <div class="add-choice-field"
+                                                 onclick="addElement(this)"
+                                            ><p style="padding:0.5vh"> Add +</p>
+                                            </div>
+                                        </div>
+                                        {{ choices_formset }}
+                                    </div>
+
+                                {% else %}
+                                    {{ field.field }}
+                                {% endif %}
+
+                            {% else %}
+                                {% if field.is_readonly %}
+                                    <div class="readonly">{{ field.contents }}</div>
+                                {% else %}
+                                    {{ field.field }}
+                                {% endif %}
+                            {% endif %}
+                            {% if field.field.help_text %}
+                                <div class="help">{{ field.field.help_text|safe }}</div>
+                            {% endif %}
+                        </div>
+                        <div style="width: 55vw;">
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    const hasChecked = document.getElementById("id_has_choices").checked;
+    const labelName = document.getElementById("choices_formset_label");
+    {#var labelName = document.querySelector('label[for="' + "id_choices" + '"]');#}
+
+    if (hasChecked) {
+        document.getElementById("choices_formset").style.display = "block";
+        labelName.textContent = "Choices"
+    } else {
+        document.getElementById("choices_formset").style.display = "none";
+        labelName.textContent = ""
+    }
+
+
+    function ShowHideDiv(checkHasChoices) {
+        /*
+            This function shows or hide the display property of choices formset
+         */
+        const hasChecked = document.getElementById("id_has_choices").checked;
+        const labelName = document.getElementById("choices_formset_label");
+        {#var labelName = document.querySelector('label[for="' + "id_choices" + '"]');#}
+        if (hasChecked) {
+            document.getElementById("choices_formset").style.display = "block";
+            labelName.textContent = "Choices"
+        } else {
+            document.getElementById("choices_formset").style.display = "none";
+            labelName.textContent = ""
+        }
+    }
+
+
+    function addElement() {
+        {#This function is used to add the new inline element of has_choices#}
+
+        //accessing totalInlineForm Length
+        const totalInlineFormElement = document.querySelector('#id_form-TOTAL_FORMS')
+        const totalInlineFormLength = totalInlineFormElement.value
+        //total item in the inline form
+        const totalInlineFormCount = totalInlineFormLength - 1;
+        //creating new input
+        const newInputElement = document.createElement("input");
+        newInputElement.type = 'text';
+        newInputElement.name = `form-${totalInlineFormCount + 1}-choice`;
+        newInputElement.id = `id_form-${totalInlineFormCount + 1}-choice`;
+        if (totalInlineFormLength === '0') {
+            const latestInputElement = document.querySelector("#id_form-MAX_NUM_FORMS");
+            // add the newly created element and its content into the DOM
+            latestInputElement.parentNode.insertBefore(newInputElement, latestInputElement.nextSibling);
+        } else {
+            //accessing last inline form
+            const latestInputId = "#" + "id_form-" + totalInlineFormCount.toString() + "-choice"
+            const latestInputElement = document.querySelector(latestInputId);
+            // add the newly created element and its content into the DOM
+            latestInputElement.parentNode.insertBefore(newInputElement, latestInputElement.nextSibling);
+        }
+        // increasing total inline form count value
+        totalInlineFormElement.value = (parseInt(totalInlineFormLength) + 1).toString()
+    }
+
+
+    function FieldTypeChange() {
+        const selectedValue = document.getElementById("id_field_type").value;
+        if (selectedValue.toString() === "FileField") {
+            // create a new p element
+            const fieldDataInputHintElement = document.createElement("p");
+            // add a class to the new element for styling
+            fieldDataInputHintElement.style.color = "orange";
+            fieldDataInputHintElement.id = "field_data_file_field_hint";
+            // add some text to the new element
+            fieldDataInputHintElement.innerText = "Format---> {'format_type': 'file'/ 'image'}\n default--->{'format_type': 'file'}";
+            // add the new element to the parent element
+            document.getElementById("initial-id_field_data").after(fieldDataInputHintElement);
+        } else {
+            // Get a reference to the div element you want to remove
+            document.getElementById("field_data_file_field_hint").remove();
+        }
+    }
+</script>

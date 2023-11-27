@@ -1,0 +1,121 @@
+version: '3'
+
+volumes:
+  production_postgres_data: {}
+  production_postgres_data_backups: {}
+  production_static: {}
+  production_media: {}
+
+services:
+  django:
+    build:
+      context: .
+      dockerfile: ./compose/production/django/Dockerfile
+    platform: linux/x86_64
+    depends_on:
+      - postgres
+#      - redis
+    env_file:
+      - ./.envs/.production/.django
+      - ./.envs/.production/.postgres
+    image: order_production_django
+    volumes:
+      - production_static:/app/staticfiles
+      - production_media:/app/digb_backend/media
+      - ../order_data/media:/app/digb_backend/media_copy
+    command: /start
+
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./compose/production/postgres/Dockerfile
+    image: order_production_postgres
+    volumes:
+      - production_postgres_data:/var/lib/postgresql/data:Z
+      - production_postgres_data_backups:/backups:z
+#      - ../order-management/db_backups:/backups
+    env_file:
+      - ./.envs/.production/.postgres
+
+  nginx:
+    build:
+      context: .
+      dockerfile: ./compose/production/nginx/Dockerfile
+    image: order_production_nginx
+    volumes:
+      - production_static:/app/staticfiles
+      - production_media:/app/media
+    depends_on:
+      - django
+    ports:
+      - "0.0.0.0:1257:80"
+
+
+#  certbot:
+#    image: certbot/certbot:latest
+#    volumes:
+#      - ./compose/production/certbot/www/:/var/www/certbot/:rw
+#      - ./compose/production/certbot/conf/:/etc/letsencrypt/:rw
+#    depends_on:
+#      - nginx
+
+#  traefik:
+#    build:
+#      context: .
+#      dockerfile: ./compose/production/traefik/Dockerfile
+#    image: event_production_traefik
+#    depends_on:
+#      - django
+#    volumes:
+#      - production_traefik:/etc/traefik/acme:z
+#    ports:
+#      - "0.0.0.0:80:80"
+#      - "0.0.0.0:443:443"
+#      - "0.0.0.0:5555:5555"
+
+#  redis:
+#    image: redis:7.0.4-alpine
+
+#  celeryworker:
+#    build:
+#      context: .
+#      dockerfile: ./compose/production/django/Dockerfile
+#    platform: linux/x86_64
+#    depends_on:
+#      - postgres
+#      - redis
+#    env_file:
+#      - ./.envs/.production/.django
+#      - ./.envs/.production/.postgres
+#    image: event_production_celeryworker
+#    command: /start-celeryworker
+
+#  celerybeat:
+#    build:
+#      context: .
+#      dockerfile: ./compose/production/django/Dockerfile
+#    platform: linux/x86_64
+#    depends_on:
+#      - postgres
+#      - redis
+#    env_file:
+#      - ./.envs/.production/.django
+#      - ./.envs/.production/.postgres
+#    image: event_production_celerybeat
+#    command: /start-celerybeat
+
+
+#  flower:
+#    build:
+#      context: .
+#      dockerfile: ./compose/production/django/Dockerfile
+#    platform: linux/x86_64
+#    depends_on:
+#      - postgres
+#      - redis
+#    env_file:
+#      - ./.envs/.production/.django
+#      - ./.envs/.production/.postgres
+#    image: event_production_flower
+#    command: /start-flower
