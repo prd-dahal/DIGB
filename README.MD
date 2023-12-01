@@ -30,7 +30,8 @@ PS: *Docker Compose V2 might not work properly*
 Install following prerequisities. 
 
 - Node: [Install Node](https://nodejs.org/en) (**version >= 18.17.0**)
-PS: Recommend version is **18.17.0**
+
+PS: Recommended version is **18.17.0**
 
 #### Steps to run the project
 1. Clone the repository:
