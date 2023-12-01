@@ -2,7 +2,8 @@
 Install the following prerequisities:
 - Docker: [Install Docker](https://docs.docker.com/get-docker/) (**version 24.0.6**)
 - Docker Compose: [Install Docker Compose](https://docs.docker.com/compose/install/) (**verson 1.29.2**) 
-PS: *Docker Compose V2 might not work properly*
+
+*PS: Docker Compose V2 might not work properly*
 
 #### Steps to run the project
 
@@ -31,7 +32,7 @@ Install following prerequisities.
 
 - Node: [Install Node](https://nodejs.org/en) (**version >= 18.17.0**)
 
-PS: Recommended version is **18.17.0**
+*PS: Recommended version is **18.17.0***
 
 #### Steps to run the project
 1. Clone the repository:
