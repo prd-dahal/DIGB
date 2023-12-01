@@ -1,0 +1,8 @@
+# PostgreSQL
+# ------------------------------------------------------------------------------
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_DB=digb_backend
+POSTGRES_USER=oCANMyEFzSYLuwdyDctIQpBZcxBikkxY
+POSTGRES_PASSWORD=sbPhZ2kr2qvN7hnIprowFmzRp2N8IplueCofkjkU7S4RO3SS5bVxQmgCkCoN7m7n
+
